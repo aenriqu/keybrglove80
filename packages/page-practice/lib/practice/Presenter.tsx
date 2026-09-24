@@ -14,6 +14,7 @@ import { createRef, PureComponent, type ReactNode } from "react";
 import { Buddy } from "../glove80/Buddy.tsx";
 import { FingerHint } from "../glove80/FingerHint.tsx";
 import { PaceBar } from "../glove80/PaceBar.tsx";
+import { usePath } from "../glove80/usePath.ts";
 import { Controls } from "./Controls.tsx";
 import { Indicators } from "./Indicators.tsx";
 import { DeferredKeyboardPresenter } from "./KeyboardPresenter.tsx";
@@ -295,6 +296,8 @@ function NormalLayout({
   readonly textInput: ReactNode;
   readonly tour: ReactNode;
 }) {
+  // Mastered letters start fading at stage 2, after the home position is found.
+  const fade = usePath().index >= 1;
   return (
     <Screen>
       <Indicators state={state} aside={coachBuddy} />
@@ -316,6 +319,7 @@ function NormalLayout({
             lastLesson={state.lastLesson}
             lessonKeys={state.lessonKeys}
             missed={state.missed}
+            fade={fade}
           />
         </Zoomer>
       </div>

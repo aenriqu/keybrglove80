@@ -1,6 +1,7 @@
 import { lessonProps } from "@keybr/lesson";
 import { useResults } from "@keybr/result";
 import { useSettings } from "@keybr/settings";
+import { useView } from "@keybr/widget";
 import { clsx } from "clsx";
 import {
   memo,
@@ -10,11 +11,14 @@ import {
   useRef,
   useState,
 } from "react";
+import { views } from "../views.tsx";
 import * as styles from "./Buddy.module.less";
 import * as coachStyles from "./Coach.module.less";
 import { coachTip, lessonStars } from "./coach.ts";
+import { sessionMinutes, stages as pathStages } from "./path.ts";
 import { drawBuddy } from "./sprite.ts";
 import { useQuestRecord } from "./store.ts";
+import { usePath } from "./usePath.ts";
 import { buddyState, type Mood, stageOf, stages } from "./xp.ts";
 
 export const Buddy = memo(function Buddy({
@@ -28,6 +32,8 @@ export const Buddy = memo(function Buddy({
   const { settings } = useSettings();
   const last = results.at(-1);
   const quest = useQuestRecord();
+  const path = usePath();
+  const { setView } = useView(views);
   const [now] = useState(() => Date.now());
   const state = useMemo(
     () =>
@@ -81,6 +87,17 @@ export const Buddy = memo(function Buddy({
             </span>
           )}
         </div>
+        {coach && (
+          <button
+            type="button"
+            className={styles.path}
+            title="Open your path"
+            onClick={() => setView("path")}
+          >
+            Stage {path.index + 1}/{pathStages.length} ·{" "}
+            {pathStages[path.index].name} · {path.detail}
+          </button>
+        )}
         {coach && last != null && (
           <div className={styles.tip}>
             Last lesson{" "}
@@ -90,7 +107,15 @@ export const Buddy = memo(function Buddy({
           </div>
         )}
         {coach && (
-          <div className={styles.tip}>{coachTip(last, results.length)}</div>
+          <div className={styles.tip}>
+            {coachTip(last, results.length, {
+              stageUp: path.fresh ? pathStages[path.index] : null,
+              sessionMinutes: sessionMinutes(
+                results,
+                Math.max(now, last?.timeStamp ?? 0),
+              ),
+            })}
+          </div>
         )}
       </div>
     </div>

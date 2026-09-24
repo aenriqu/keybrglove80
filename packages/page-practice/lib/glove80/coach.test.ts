@@ -40,3 +40,12 @@ test("pace is 10% above the recent average", () => {
     110,
   );
 });
+
+test("stage ups and breaks come first", () => {
+  isTrue(
+    coachTip(undefined, 0, {
+      stageUp: { name: "Build speed", unlocks: "The pace line" },
+    }).startsWith("New stage: Build speed"),
+  );
+  isTrue(coachTip(undefined, 0, { sessionMinutes: 16 }).includes("break"));
+});

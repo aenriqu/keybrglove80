@@ -13,13 +13,17 @@ A personal copy of keybr.com set up for the MoErgo Glove80.
 
 3. Open http://localhost:3000/
 
-Stop it with Ctrl+C. The first run takes a few minutes to build; after that it starts in seconds. After pulling new code, `./start.sh` rebuilds on its own.
+Stop it with Ctrl+C. The first run takes a few minutes to build; after that it starts in seconds. After pulling or editing code, `./start.sh` rebuilds on its own.
 
 ## What's different
 
 * The virtual keyboard is a Glove80 with MoErgo's factory layout. The Win/Mac switch above the lesson swaps the thumb-key labels.
 * Key Quest (gamepad button): drills for thumb keys, edge keys, and navigation keys.
-* A pixel buddy earns XP from lessons and Key Quest rounds, and gets new gear as it levels up.
+* A pixel buddy earns XP from lessons, drills and Key Quest rounds, and gets new gear as it levels up.
+* A guided path (stairs button) in five stages: find home, learn the letters, build speed, numbers and symbols, go full-time. Each stage has one goal and unlocks the next tools, and reached stages are never taken away. The path page also has a weekly check-in and a per-finger report card.
+* A finger hint under the text names the finger for the next key and how to reach it on the Glove80. The hands on the keyboard rest on the home keys and the thumb cluster.
+* Drills (ABC button): common letter pairs aimed at your weakest finger, then numbers and symbols from stage 4.
+* From stage 2 mastered letters fade from the keyboard, from stage 3 a pace line runs 10% ahead of your recent speed. Each lesson gets 1 to 5 stars, accuracy first.
 * Progress is saved in your browser. Clearing site data for localhost erases it.
 
 ---

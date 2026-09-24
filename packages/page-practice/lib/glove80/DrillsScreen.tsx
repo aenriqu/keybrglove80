@@ -3,19 +3,43 @@ import { KeyLayer, TargetLayer, VirtualKeyboard } from "@keybr/keyboard-ui";
 import { Screen } from "@keybr/pages-shared";
 import { useResults } from "@keybr/result";
 import { Button, Icon, useView, useWindowEvent, Zoomer } from "@keybr/widget";
-import { mdiArrowLeft, mdiPlay } from "@mdi/js";
+import { mdiArrowLeft, mdiLock, mdiPlay } from "@mdi/js";
 import { clsx } from "clsx";
 import { type ReactNode, useMemo, useRef, useState } from "react";
 import { views } from "../views.tsx";
 import { Buddy } from "./Buddy.tsx";
 import * as coach from "./Coach.module.less";
+import { fingerStats, weakestFinger } from "./finger.ts";
 import { FingerHint } from "./FingerHint.tsx";
 import { OsToggle } from "./OsToggle.tsx";
-import { drillText, letterWeakness, passAccuracy, pickPairs } from "./pairs.ts";
+import {
+  drillText,
+  focusOn,
+  letterWeakness,
+  numbersText,
+  pickPairs,
+  symbolsText,
+} from "./pairs.ts";
+import { drillPass, stages } from "./path.ts";
 import * as styles from "./QuestScreen.module.less";
-import { saveRound } from "./store.ts";
+import { saveRound, useQuestRecord } from "./store.ts";
+import { usePath } from "./usePath.ts";
+
+type Mode = "pairs" | "numbers" | "symbols";
+
+const modes: readonly {
+  readonly id: Mode;
+  readonly name: string;
+  /** The path stage that unlocks the mode. */
+  readonly stage: number;
+}[] = [
+  { id: "pairs", name: "Letter Pairs", stage: 0 },
+  { id: "numbers", name: "Numbers", stage: 3 },
+  { id: "symbols", name: "Symbols", stage: 3 },
+];
 
 type Round = {
+  readonly mode: Mode;
   readonly pairs: readonly string[];
   readonly text: string;
   readonly pos: number;
@@ -29,9 +53,15 @@ type Round = {
   } | null;
 };
 
-const newRound = (pairs: readonly string[]): Round => ({
+const newRound = (mode: Mode, pairs: readonly string[]): Round => ({
+  mode,
   pairs,
-  text: drillText(pairs),
+  text:
+    mode === "numbers"
+      ? numbersText()
+      : mode === "symbols"
+        ? symbolsText()
+        : drillText(pairs),
   pos: 0,
   errors: 0,
   missed: false,
@@ -39,22 +69,31 @@ const newRound = (pairs: readonly string[]): Round => ({
   done: null,
 });
 
-export function PairsScreen(): ReactNode {
+export function DrillsScreen(): ReactNode {
   return (
     <KeyboardProvider>
-      <Pairs />
+      <Drills />
     </KeyboardProvider>
   );
 }
 
-function Pairs(): ReactNode {
+function Drills(): ReactNode {
   const { setView } = useView(views);
   const keyboard = useKeyboard();
   const { results } = useResults();
-  const weakness = useMemo(() => letterWeakness(results), [results]);
+  const { best } = useQuestRecord();
+  const path = usePath();
+  const focus = useMemo(
+    () => weakestFinger(fingerStats(keyboard, results)),
+    [keyboard, results],
+  );
+  const weakness = useMemo(
+    () => focusOn(letterWeakness(results), focus?.letters ?? ""),
+    [results, focus],
+  );
   const [passed, setPassed] = useState<ReadonlySet<string>>(new Set());
   const [round, setRoundState] = useState(() =>
-    newRound(pickPairs(weakness, passed)),
+    newRound("pairs", pickPairs(weakness, passed)),
   );
   // Fast key presses can arrive before a re-render, so read the latest
   // round from a ref rather than from the render closure.
@@ -65,14 +104,21 @@ function Pairs(): ReactNode {
   };
   const [pressed, setPressed] = useState<readonly KeyId[]>([]);
 
+  const start = (mode: Mode) => {
+    (document.activeElement as HTMLElement | null)?.blur();
+    setRound(newRound(mode, pickPairs(weakness, passed)));
+  };
+
   const next = () => {
     const round = roundRef.current;
-    if (round.done?.pass) {
+    if (round.mode !== "pairs") {
+      setRound(newRound(round.mode, []));
+    } else if (round.done?.pass) {
       const nextPassed = new Set([...passed, ...round.pairs]);
       setPassed(nextPassed);
-      setRound(newRound(pickPairs(weakness, nextPassed)));
+      setRound(newRound("pairs", pickPairs(weakness, nextPassed)));
     } else {
-      setRound(newRound(round.pairs));
+      setRound(newRound("pairs", round.pairs));
     }
   };
 
@@ -93,7 +139,7 @@ function Pairs(): ReactNode {
       return;
     }
     event.preventDefault();
-    const now = performance.now();
+    const now = event.timeStamp;
     if (event.key !== round.text[round.pos]) {
       setRound({
         ...round,
@@ -111,8 +157,8 @@ function Pairs(): ReactNode {
     const length = round.text.length;
     const accuracy = (length - round.errors) / length;
     const minutes = Math.max(now - startedAt, 1) / 60000;
-    const pass = accuracy >= passAccuracy;
-    saveRound("pairs", Math.round(accuracy * 100), pass ? 15 : 5);
+    const pass = accuracy >= drillPass;
+    saveRound(round.mode, Math.floor(accuracy * 100), pass ? 15 : 5);
     setRound({
       ...round,
       pos,
@@ -142,14 +188,46 @@ function Pairs(): ReactNode {
           label="Practice"
           onClick={() => setView("practice")}
         />
-        <h1 className={styles.title}>Letter Pairs</h1>
+        <h1 className={styles.title}>Drills</h1>
         <OsToggle />
       </div>
       <Buddy compact={true} />
       <div className={styles.play}>
+        <div className={styles.groups}>
+          {modes.map((mode) => {
+            const locked = path.index < mode.stage;
+            return (
+              <button
+                key={mode.id}
+                type="button"
+                className={clsx(
+                  styles.group,
+                  mode.id === round.mode && styles.active,
+                )}
+                disabled={locked}
+                title={
+                  locked
+                    ? `Unlocks at stage ${mode.stage + 1}: ${stages[mode.stage].name}`
+                    : undefined
+                }
+                onClick={() => start(mode.id)}
+              >
+                <span className={styles.groupName}>
+                  {locked && <Icon shape={mdiLock} />} {mode.name}
+                </span>
+                <span className={styles.groupBest}>
+                  {locked
+                    ? `unlocks at stage ${mode.stage + 1}`
+                    : `best ${best[mode.id] ?? 0}%`}
+                </span>
+              </button>
+            );
+          })}
+        </div>
         <div className={styles.progress}>
-          Pairs: {round.pairs.join(" ")} · pass at{" "}
-          {Math.round(passAccuracy * 100)}% accuracy · {passed.size} passed
+          {round.mode === "pairs"
+            ? `Pairs: ${round.pairs.join(" ")}${focus != null ? ` · focus: ${focus.finger}` : ""} · ${passed.size} passed`
+            : `Pass at ${Math.round(drillPass * 100)}% accuracy`}
         </div>
         {round.done == null ? (
           <>
@@ -180,14 +258,20 @@ function Pairs(): ReactNode {
             </div>
             <Button
               icon={<Icon shape={mdiPlay} />}
-              label={round.done.pass ? "New pairs (Enter)" : "Again (Enter)"}
+              label={
+                !round.done.pass
+                  ? "Again (Enter)"
+                  : round.mode === "pairs"
+                    ? "New pairs (Enter)"
+                    : "Next round (Enter)"
+              }
               onClick={next}
             />
           </>
         )}
       </div>
       <div className={styles.keyboard}>
-        <Zoomer id="Keyboard/Pairs">
+        <Zoomer id="Keyboard/Drills">
           <VirtualKeyboard keyboard={keyboard} height="32rem">
             <KeyLayer depressedKeys={pressed} showColors={true} />
             <TargetLayer targets={target != null ? [target] : []} />

@@ -87,3 +87,82 @@ function keyLabel(shape: KeyShape): string {
     ? String.fromCodePoint(a).toUpperCase()
     : shape.id;
 }
+
+export type FingerStat = {
+  /** E.g. "left pinky". */
+  readonly finger: string;
+  /** Letters this finger types. */
+  readonly letters: string;
+  readonly hits: number;
+  readonly misses: number;
+  /** From 0 to 1. */
+  readonly accuracy: number;
+  /** Average time per key in milliseconds. */
+  readonly time: number;
+};
+
+const fingerOrder = [
+  "left pinky",
+  "left ring",
+  "left middle",
+  "left index",
+  "right index",
+  "right middle",
+  "right ring",
+  "right pinky",
+];
+
+/** Recent accuracy and speed per finger, from the per-key lesson stats. */
+export function fingerStats(
+  keyboard: Keyboard,
+  results: readonly {
+    readonly histogram: Iterable<{
+      readonly codePoint: CodePoint;
+      readonly hitCount: number;
+      readonly missCount: number;
+      readonly timeToType: number;
+    }>;
+  }[],
+): FingerStat[] {
+  const sums = new Map(
+    fingerOrder.map((finger) => [
+      finger,
+      { letters: new Set<string>(), hits: 0, misses: 0, time: 0 },
+    ]),
+  );
+  for (const { histogram } of results.slice(-20)) {
+    for (const { codePoint, hitCount, missCount, timeToType } of histogram) {
+      const hint = fingerHint(keyboard, codePoint);
+      const sum = hint != null ? sums.get(hint.finger) : undefined;
+      if (sum != null) {
+        sum.letters.add(hint!.char.toLowerCase());
+        sum.hits += hitCount;
+        sum.misses += missCount;
+        sum.time += timeToType * hitCount;
+      }
+    }
+  }
+  return fingerOrder.map((finger) => {
+    const { letters, hits, misses, time } = sums.get(finger)!;
+    return {
+      finger,
+      letters: [...letters].sort().join(""),
+      hits,
+      misses,
+      accuracy: hits + misses > 0 ? hits / (hits + misses) : 1,
+      time: hits > 0 ? time / hits : 0,
+    };
+  });
+}
+
+/** The finger that needs the most work, once there is enough data. */
+export function weakestFinger(stats: readonly FingerStat[]): FingerStat | null {
+  const known = stats.filter(({ hits, misses }) => hits + misses >= 30);
+  if (known.length === 0) {
+    return null;
+  }
+  // Misses count most, slowness breaks ties.
+  const cost = ({ accuracy, time }: FingerStat) =>
+    (1 - accuracy) * 10 + time / 1000;
+  return known.reduce((a, b) => (cost(b) > cost(a) ? b : a));
+}

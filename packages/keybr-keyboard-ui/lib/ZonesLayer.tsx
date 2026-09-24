@@ -1,6 +1,7 @@
 import { type KeyShape, useKeyboard, type ZoneId } from "@keybr/keyboard";
 import { type Point } from "@keybr/widget";
 import { memo, type ReactNode } from "react";
+import glove80LeftHand from "../assets/glove80-left-hand.png";
 import { getKeyCenter, Surface } from "./shapes.tsx";
 
 export const ZonesLayer = memo(function ZonesLayer(): ReactNode {
@@ -15,7 +16,15 @@ export const ZonesLayer = memo(function ZonesLayer(): ReactNode {
   };
   const l = findHomingKey("left") ?? keyboard.getShape("KeyF");
   const r = findHomingKey("right") ?? keyboard.getShape("KeyJ");
-  if (l != null && r != null) {
+  if (l != null && r != null && keyboard.geometry.isGlove80) {
+    // Hands drawn for the Glove80, thumbs on the thumb cluster.
+    return (
+      <Surface>
+        <Glove80Hand center={getKeyCenter(l)} side={1} />
+        <Glove80Hand center={getKeyCenter(r)} side={-1} />
+      </Surface>
+    );
+  } else if (l != null && r != null) {
     return (
       <Surface>
         <LeftHand center={getKeyCenter(l)} />
@@ -26,6 +35,34 @@ export const ZonesLayer = memo(function ZonesLayer(): ReactNode {
     return null;
   }
 });
+
+/*
+ * The Glove80 hand is a picture of the left hand on a 560px reference
+ * drawing of the left half, where the F key center sits at (285, 238)
+ * and one key unit is 1.479 px. The fit matrix lines the drawn fingertips
+ * up with A, S, D, F and the thumb with Backspace. The right hand is the
+ * same picture mirrored around J.
+ */
+const handFit = "matrix(1.0174 -0.0733 0.0733 1.0174 -9.8 78.3)";
+const handScale = 1 / 1.479;
+
+function Glove80Hand({
+  center: { x, y },
+  side,
+}: {
+  center: Point;
+  side: 1 | -1;
+}): ReactNode {
+  return (
+    <image
+      href={glove80LeftHand}
+      width={560}
+      height={560}
+      opacity={0.95}
+      transform={`translate(${x} ${y}) scale(${side * handScale} ${handScale}) translate(-285 -238) ${handFit}`}
+    />
+  );
+}
 
 const LeftHand = memo(function LeftHand({
   center: { x, y },

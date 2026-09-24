@@ -20,7 +20,13 @@ fi
 [ -f .env ] || cp .env.example .env
 
 stamp="root/.build-stamp"
-head="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+# The build is current when neither the commit nor any uncommitted change
+# (edited or new files) has moved since the last build.
+head="$({
+  git rev-parse HEAD
+  git diff HEAD
+  git ls-files --others --exclude-standard -z | xargs -0 cat 2>/dev/null
+} 2>/dev/null | shasum | cut -d" " -f1)"
 
 if [ "${1:-}" = "--build" ] || [ ! -d node_modules ] || [ ! -d root/lib ] ||
   [ "$(cat "${stamp}" 2>/dev/null)" != "${head}" ]; then

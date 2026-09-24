@@ -23,6 +23,7 @@ export const KeyboardPresenter = memo(function KeyboardPresenter({
   lastLesson,
   lessonKeys,
   missed = null,
+  fade = false,
 }: {
   readonly focus: boolean;
   readonly depressedKeys: readonly string[];
@@ -31,6 +32,8 @@ export const KeyboardPresenter = memo(function KeyboardPresenter({
   readonly lastLesson: LastLesson | null;
   readonly lessonKeys?: LessonKeys;
   readonly missed?: CodePoint | null;
+  /** Hide the labels of mastered letters. */
+  readonly fade?: boolean;
 }): ReactNode {
   const { settings } = useSettings();
   const keyboard = useKeyboard();
@@ -41,6 +44,9 @@ export const KeyboardPresenter = memo(function KeyboardPresenter({
   const next = suffix[0] ?? null;
   const hidden = useMemo(() => {
     const ids: string[] = [];
+    if (!fade) {
+      return ids;
+    }
     for (const key of lessonKeys ?? []) {
       const { codePoint } = key.letter;
       const id = keyboard.getCombo(codePoint)?.id;
@@ -55,7 +61,7 @@ export const KeyboardPresenter = memo(function KeyboardPresenter({
       }
     }
     return ids;
-  }, [keyboard, lessonKeys, missed, next]);
+  }, [keyboard, lessonKeys, missed, next, fade]);
   return (
     <>
       {hidden.length > 0 && (

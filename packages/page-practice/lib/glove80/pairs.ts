@@ -65,5 +65,74 @@ export function drillText(pairs: readonly string[]): string {
   return [...groups, pairs.join(" ")].join(" ");
 }
 
-/** A round passes at 96% accuracy, speed does not matter yet. */
-export const passAccuracy = 0.96;
+/** Letters to lean on: their weakness counts extra when picking pairs. */
+export function focusOn(
+  weakness: ReadonlyMap<string, number>,
+  letters: string,
+): Map<string, number> {
+  const boosted = new Map(weakness);
+  for (const letter of letters) {
+    const value = boosted.get(letter);
+    if (value != null) {
+      boosted.set(letter, value + 0.25);
+    }
+  }
+  return boosted;
+}
+
+/** Twelve groups of digits, every digit at least twice. */
+export function numbersText(random = Math.random): string {
+  const digits = shuffle([..."01234567890123456789"], random);
+  const groups: string[] = [];
+  while (digits.length > 0) {
+    groups.push(digits.splice(0, 2 + Math.floor(random() * 2)).join(""));
+  }
+  return groups.join(" ");
+}
+
+/** Symbols the way they show up in real text and code. */
+const symbolSnippets = [
+  "(a)",
+  "[b]",
+  "{c}",
+  "a-b",
+  "x_y",
+  "a=b",
+  "a+b",
+  "1/2",
+  "a;",
+  "b:",
+  "'a'",
+  '"b"',
+  "a!",
+  "b?",
+  "@x",
+  "#1",
+  "$5",
+  "5%",
+  "a&b",
+  "a*b",
+  "a|b",
+  "a\\b",
+  "<a>",
+  "a.b",
+  "a,b",
+  "~/a",
+  "`a`",
+  "^a",
+];
+
+/** Ten random snippets, so each round mixes different symbols. */
+export function symbolsText(random = Math.random): string {
+  return shuffle([...symbolSnippets], random)
+    .slice(0, 10)
+    .join(" ");
+}
+
+function shuffle<T>(list: T[], random: () => number): T[] {
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  return list;
+}

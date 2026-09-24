@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import { deepEqual, equal, isTrue } from "rich-assert";
-import { drillText, letterWeakness, pickPairs } from "./pairs.ts";
+import {
+  drillText,
+  focusOn,
+  letterWeakness,
+  numbersText,
+  pickPairs,
+  symbolsText,
+} from "./pairs.ts";
 
 test("starts with the first letters keybr teaches", () => {
   const weakness = letterWeakness([]);
@@ -26,4 +33,27 @@ test("weak letters come first, passed pairs are skipped", () => {
 
 test("drill text", () => {
   equal(drillText(["th", "he"]), "th th th he he he th he");
+});
+
+test("focus letters count extra", () => {
+  const weakness = new Map([
+    ["t", 0.1],
+    ["h", 0.1],
+    ["e", 0.1],
+    ["a", 0.1],
+    ["n", 0.1],
+  ]);
+  deepEqual(pickPairs(focusOn(weakness, "a"), new Set(), 1), ["an"]);
+});
+
+test("numbers use every digit", () => {
+  const text = numbersText();
+  for (const digit of "0123456789") {
+    isTrue(text.includes(digit));
+  }
+  isTrue(/^[0-9 ]+$/.test(text));
+});
+
+test("symbols are ten snippets", () => {
+  equal(symbolsText().split(" ").length, 10);
 });

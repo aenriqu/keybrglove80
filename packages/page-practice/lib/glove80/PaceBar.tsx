@@ -2,6 +2,7 @@ import { useResults } from "@keybr/result";
 import { type ReactNode, useEffect, useRef } from "react";
 import * as styles from "./Coach.module.less";
 import { paceSpeed } from "./coach.ts";
+import { usePath } from "./usePath.ts";
 
 type Lesson = {
   readonly textInput: { readonly pos: number; readonly length: number };
@@ -13,7 +14,8 @@ type Lesson = {
  */
 export function PaceBar({ lesson }: { readonly lesson: Lesson }): ReactNode {
   const { results } = useResults();
-  const pace = paceSpeed(results);
+  // The pace line turns on at stage 3, once accuracy holds.
+  const pace = usePath().index >= 2 ? paceSpeed(results) : 0;
   const youRef = useRef<HTMLDivElement>(null);
   const markerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {

@@ -7,11 +7,20 @@ export type QuestRecord = {
   readonly rounds: readonly number[];
   /** Best score per mode. */
   readonly best: { readonly [mode: string]: number };
+  /** The highest path stage reached, and when. */
+  readonly stage: number;
+  readonly stageAt: number;
 };
 
 const storageKey = "glove80.quest";
 
-const empty: QuestRecord = { xp: 0, rounds: [], best: {} };
+const empty: QuestRecord = {
+  xp: 0,
+  rounds: [],
+  best: {},
+  stage: 0,
+  stageAt: 0,
+};
 
 let cached: QuestRecord | null = null;
 const listeners = new Set<() => void>();
@@ -47,11 +56,20 @@ export function saveRound(mode: string, score: number, xp: number): boolean {
   const record = read();
   const best = record.best[mode] ?? 0;
   write({
+    ...record,
     xp: record.xp + xp,
     rounds: [...record.rounds, Date.now()].slice(-400),
     best: { ...record.best, [mode]: Math.max(best, score) },
   });
   return score > best;
+}
+
+/** Remembers a newly reached path stage. */
+export function reachStage(stage: number): void {
+  const record = read();
+  if (stage > record.stage) {
+    write({ ...record, stage, stageAt: Date.now() });
+  }
 }
 
 function subscribe(listener: () => void): () => void {

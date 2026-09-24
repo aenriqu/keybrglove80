@@ -9,6 +9,7 @@ import {
   mdiGamepadVariant,
   mdiHelpCircleOutline,
   mdiRedo,
+  mdiStairs,
   mdiUndo,
 } from "@mdi/js";
 import { memo, type ReactNode } from "react";
@@ -43,9 +44,16 @@ export const Controls = memo(function Controls({
       />
       <IconButton
         icon={<Icon shape={mdiAlphabeticalVariant} />}
-        title="Letter Pairs"
+        title="Drills: letter pairs, numbers, symbols"
         onClick={() => {
-          setView("pairs");
+          setView("drills");
+        }}
+      />
+      <IconButton
+        icon={<Icon shape={mdiStairs} />}
+        title="Your path: stages, weekly check-in, finger report"
+        onClick={() => {
+          setView("path");
         }}
       />
       <IconButton

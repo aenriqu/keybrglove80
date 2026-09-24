@@ -14,7 +14,27 @@ const habits = [
  * One touch typing tip based on the last lesson.
  * Accuracy comes first: speed follows clean habits, not the other way round.
  */
-export function coachTip(last: Result | undefined, count: number): string {
+export function coachTip(
+  last: Result | undefined,
+  count: number,
+  {
+    stageUp = null,
+    sessionMinutes = 0,
+  }: {
+    /** Set right after reaching a new stage: its name and what it unlocks. */
+    readonly stageUp?: {
+      readonly name: string;
+      readonly unlocks: string;
+    } | null;
+    readonly sessionMinutes?: number;
+  } = {},
+): string {
+  if (stageUp != null) {
+    return `New stage: ${stageUp.name}! Unlocked: ${stageUp.unlocks}.`;
+  }
+  if (sessionMinutes >= 15) {
+    return `${Math.round(sessionMinutes)} minutes of typing this session. Take a short break, practice sticks better in short sessions.`;
+  }
   if (last == null) {
     return "Start slow. Fingers on the home keys (feel the bumps on F and J), thumbs on the thumb keys.";
   }
