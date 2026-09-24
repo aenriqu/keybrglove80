@@ -1,0 +1,89 @@
+.hint {
+  min-block-size: 1.5rem;
+  color: var(--secondary);
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.missed {
+  color: var(--error);
+}
+
+.key {
+  display: inline-block;
+  min-inline-size: 1.5rem;
+  padding-inline: 0.3rem;
+  border: 1px solid currentcolor;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  text-align: center;
+}
+
+.finger {
+  color: var(--secondary);
+  font-weight: bold;
+}
+
+.missed .finger {
+  color: var(--error);
+}
+
+.pace {
+  position: relative;
+  block-size: 0.3rem;
+  margin-block: 0.75rem 0.5rem;
+  border-radius: 0.15rem;
+  background-color: var(--secondary-f1);
+}
+
+.you {
+  inline-size: 0;
+  block-size: 100%;
+  border-radius: 0.15rem;
+  background-color: var(--fast-key-color);
+}
+
+.you[data-behind] {
+  background-color: var(--slow-key-color);
+}
+
+.marker {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: -0.3rem;
+  inline-size: 2px;
+  background-color: var(--secondary);
+}
+
+.paceLabel {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: 0.5rem;
+  color: var(--secondary-l2);
+  font-size: 0.75rem;
+}
+
+.drill {
+  font-family: monospace;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.typed {
+  color: var(--secondary-l2);
+}
+
+.current {
+  border-block-end: 2px solid var(--secondary);
+}
+
+.current.missed {
+  border-color: var(--error);
+}
+
+.stars {
+  color: var(--fast-key-color);
+  letter-spacing: 0.1em;
+}

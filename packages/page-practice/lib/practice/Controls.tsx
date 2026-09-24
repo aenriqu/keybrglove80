@@ -3,6 +3,7 @@ import { names } from "@keybr/lesson-ui";
 import { useSettings } from "@keybr/settings";
 import { Button, Icon, IconButton, useView } from "@keybr/widget";
 import {
+  mdiAlphabeticalVariant,
   mdiAspectRatio,
   mdiCog,
   mdiGamepadVariant,
@@ -38,6 +39,13 @@ export const Controls = memo(function Controls({
         title="Key Quest"
         onClick={() => {
           setView("quest");
+        }}
+      />
+      <IconButton
+        icon={<Icon shape={mdiAlphabeticalVariant} />}
+        title="Letter Pairs"
+        onClick={() => {
+          setView("pairs");
         }}
       />
       <IconButton

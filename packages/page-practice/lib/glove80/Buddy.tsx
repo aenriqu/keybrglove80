@@ -1,4 +1,6 @@
+import { lessonProps } from "@keybr/lesson";
 import { useResults } from "@keybr/result";
+import { useSettings } from "@keybr/settings";
 import { clsx } from "clsx";
 import {
   memo,
@@ -9,16 +11,22 @@ import {
   useState,
 } from "react";
 import * as styles from "./Buddy.module.less";
+import * as coachStyles from "./Coach.module.less";
+import { coachTip, lessonStars } from "./coach.ts";
 import { drawBuddy } from "./sprite.ts";
 import { useQuestRecord } from "./store.ts";
 import { buddyState, type Mood, stageOf, stages } from "./xp.ts";
 
 export const Buddy = memo(function Buddy({
   compact = false,
+  coach = false,
 }: {
   readonly compact?: boolean;
+  readonly coach?: boolean;
 }): ReactNode {
   const { results } = useResults();
+  const { settings } = useSettings();
+  const last = results.at(-1);
   const quest = useQuestRecord();
   const [now] = useState(() => Date.now());
   const state = useMemo(
@@ -73,10 +81,25 @@ export const Buddy = memo(function Buddy({
             </span>
           )}
         </div>
+        {coach && last != null && (
+          <div className={styles.tip}>
+            Last lesson{" "}
+            <span className={coachStyles.stars}>
+              {stars(lessonStars(last, settings.get(lessonProps.targetSpeed)))}
+            </span>
+          </div>
+        )}
+        {coach && (
+          <div className={styles.tip}>{coachTip(last, results.length)}</div>
+        )}
       </div>
     </div>
   );
 });
+
+function stars(count: number): string {
+  return "\u2605".repeat(count) + "\u2606".repeat(5 - count);
+}
 
 export function Sprite({
   stage,

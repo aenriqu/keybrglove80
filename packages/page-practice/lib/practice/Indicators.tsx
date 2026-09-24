@@ -16,8 +16,10 @@ import { type LessonState } from "./state/index.ts";
 
 export const Indicators = memo(function Indicators({
   state: { keyStatsMap, summaryStats, lessonKeys, streakList, dailyGoal },
+  aside,
 }: {
   readonly state: LessonState;
+  readonly aside?: ReactNode;
 }): ReactNode {
   type State = Readonly<
     | { type: "hidden" }
@@ -69,6 +71,7 @@ export const Indicators = memo(function Indicators({
       {dailyGoal.goal > 0 && (
         <DailyGoalRow dailyGoal={dailyGoal} names={names} />
       )}
+      {aside != null && <div className={styles.aside}>{aside}</div>}
       {(state.type === "visible" || state.type === "visible-out") && (
         <Portal>
           <Popup

@@ -13,7 +13,7 @@ import {
 } from "@keybr/result";
 import { type Settings } from "@keybr/settings";
 import {
-  type Feedback,
+  Feedback,
   type LineList,
   makeStats,
   type StyledText,
@@ -46,6 +46,7 @@ export class LessonState {
   lines!: LineList; // Mutable.
   suffix!: readonly CodePoint[]; // Mutable.
   depressedKeys: readonly KeyId[] = []; // Mutable.
+  missed: CodePoint | null = null; // Mutable, the key just missed.
 
   constructor(
     progress: Progress,
@@ -73,7 +74,9 @@ export class LessonState {
   }
 
   onInput(event: IInputEvent): Feedback {
+    const expected = this.suffix[0] ?? null;
     const feedback = this.textInput.onInput(event);
+    this.missed = feedback === Feedback.Failed ? expected : null;
     this.lines = this.textInput.lines;
     this.suffix = this.textInput.remaining.map(({ codePoint }) => codePoint);
     if (this.textInput.completed) {
@@ -86,6 +89,7 @@ export class LessonState {
     this.textInput = new TextInput(fragment, this.textInputSettings);
     this.lines = this.textInput.lines;
     this.suffix = this.textInput.remaining.map(({ codePoint }) => codePoint);
+    this.missed = null;
   }
 
   #makeResult(timeStamp = Date.now()) {

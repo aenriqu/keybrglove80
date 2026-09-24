@@ -12,6 +12,8 @@ import { TextArea } from "@keybr/textinput-ui";
 import { type Focusable, Zoomer } from "@keybr/widget";
 import { createRef, PureComponent, type ReactNode } from "react";
 import { Buddy } from "../glove80/Buddy.tsx";
+import { FingerHint } from "../glove80/FingerHint.tsx";
+import { PaceBar } from "../glove80/PaceBar.tsx";
 import { Controls } from "./Controls.tsx";
 import { Indicators } from "./Indicators.tsx";
 import { DeferredKeyboardPresenter } from "./KeyboardPresenter.tsx";
@@ -52,6 +54,10 @@ function getNextView(view: View): View {
       return View.Normal;
   }
 }
+
+// Constant elements keep the memoized Indicators from re-rendering on each key.
+const coachBuddy = <Buddy compact={true} coach={true} />;
+const compactBuddy = <Buddy compact={true} />;
 
 const propView = enumProp("prefs.practice.view", View, View.Normal);
 
@@ -291,13 +297,15 @@ function NormalLayout({
 }) {
   return (
     <Screen>
-      <Indicators state={state} />
+      <Indicators state={state} aside={coachBuddy} />
       <div id={names.textInput} className={styles.textInput_normal}>
         {textInput}
       </div>
-      <div className={styles.buddy}>
-        <Buddy />
-      </div>
+      <PaceBar lesson={state} />
+      <FingerHint
+        codePoint={state.missed ?? state.suffix[0] ?? null}
+        missed={state.missed != null}
+      />
       <div id={names.keyboard} className={styles.keyboard}>
         <Zoomer id="Keyboard/Normal">
           <DeferredKeyboardPresenter
@@ -306,6 +314,8 @@ function NormalLayout({
             toggledKeys={toggledKeys}
             suffix={state.suffix}
             lastLesson={state.lastLesson}
+            lessonKeys={state.lessonKeys}
+            missed={state.missed}
           />
         </Zoomer>
       </div>
@@ -328,13 +338,15 @@ function CompactLayout({
 }) {
   return (
     <Screen>
-      <Indicators state={state} />
+      <Indicators state={state} aside={compactBuddy} />
       <div id={names.textInput} className={styles.textInput_compact}>
         {textInput}
       </div>
-      <div className={styles.buddy}>
-        <Buddy compact={true} />
-      </div>
+      <PaceBar lesson={state} />
+      <FingerHint
+        codePoint={state.missed ?? state.suffix[0] ?? null}
+        missed={state.missed != null}
+      />
       {controls}
     </Screen>
   );
