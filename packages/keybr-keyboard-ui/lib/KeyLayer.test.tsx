@@ -1,12 +1,17 @@
 import { test } from "node:test";
-import { KeyboardContext, Layout, loadKeyboard } from "@keybr/keyboard";
+import {
+  Geometry,
+  KeyboardContext,
+  Layout,
+  loadKeyboard,
+} from "@keybr/keyboard";
 import { render } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { deepEqual, equal } from "rich-assert";
 import { KeyLayer } from "./KeyLayer.tsx";
 
 test("render", () => {
-  const keyboard = loadKeyboard(Layout.EN_US);
+  const keyboard = loadKeyboard(Layout.EN_US, Geometry.ANSI_101);
 
   const r = render(
     <KeyboardContext.Provider value={keyboard}>
@@ -22,7 +27,7 @@ test("render", () => {
 });
 
 test("update", () => {
-  const keyboard = loadKeyboard(Layout.EN_US);
+  const keyboard = loadKeyboard(Layout.EN_US, Geometry.ANSI_101);
 
   const r = render(
     <KeyboardContext.Provider value={keyboard}>
@@ -41,7 +46,7 @@ test("update", () => {
 });
 
 test("events", async () => {
-  const keyboard = loadKeyboard(Layout.EN_US);
+  const keyboard = loadKeyboard(Layout.EN_US, Geometry.ANSI_101);
 
   const events: string[] = [];
 

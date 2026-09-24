@@ -1,0 +1,6 @@
+.env*
+**/node_modules
+packages/*/.types
+root/lib
+root/public/assets
+*.tsbuildinfo

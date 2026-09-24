@@ -29,3 +29,6 @@ sandbox/
 
 # Custom scripts
 deploy.sh
+
+# Local start script
+root/.build-stamp

@@ -11,6 +11,7 @@ import {
 import { TextArea } from "@keybr/textinput-ui";
 import { type Focusable, Zoomer } from "@keybr/widget";
 import { createRef, PureComponent, type ReactNode } from "react";
+import { Buddy } from "../glove80/Buddy.tsx";
 import { Controls } from "./Controls.tsx";
 import { Indicators } from "./Indicators.tsx";
 import { DeferredKeyboardPresenter } from "./KeyboardPresenter.tsx";
@@ -62,15 +63,6 @@ export class Presenter extends PureComponent<Props, State> {
     tour: false,
     focus: false,
   };
-
-  override componentDidMount() {
-    if (this.props.state.settings.isNew) {
-      this.setState({
-        view: View.Normal,
-        tour: true,
-      });
-    }
-  }
 
   override render() {
     const {
@@ -303,6 +295,9 @@ function NormalLayout({
       <div id={names.textInput} className={styles.textInput_normal}>
         {textInput}
       </div>
+      <div className={styles.buddy}>
+        <Buddy />
+      </div>
       <div id={names.keyboard} className={styles.keyboard}>
         <Zoomer id="Keyboard/Normal">
           <DeferredKeyboardPresenter
@@ -336,6 +331,9 @@ function CompactLayout({
       <Indicators state={state} />
       <div id={names.textInput} className={styles.textInput_compact}>
         {textInput}
+      </div>
+      <div className={styles.buddy}>
+        <Buddy compact={true} />
       </div>
       {controls}
     </Screen>

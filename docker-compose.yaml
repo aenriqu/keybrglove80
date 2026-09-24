@@ -2,9 +2,22 @@ services:
   keybr:
     build:
       dockerfile: ./Dockerfile
+    environment:
+      APP_URL: http://localhost:3000/
+      COOKIE_DOMAIN: localhost
+      COOKIE_SECURE: "false"
+      DATA_DIR: /data
+      DATABASE_CLIENT: sqlite
+      DATABASE_FILENAME: /data/database.sqlite
+      MAIL_DOMAIN: localhost
+      MAIL_KEY: ""
+      MAIL_FROM_ADDRESS: user@localhost
+      MAIL_FROM_NAME: user
     volumes:
-      - /path/to/data_dir:~/.local/state/keybr
-      - /path/to/data_dir/.env:/etc/keybr/env
+      - keybr-data:/data
     ports:
-      - 30044:3000
+      - 3000:3000
     restart: unless-stopped
+
+volumes:
+  keybr-data:

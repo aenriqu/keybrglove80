@@ -3,6 +3,7 @@ import { ANSI_101 } from "./geometry/ansi_101.ts";
 import { ANSI_101_FULL } from "./geometry/ansi_101_full.ts";
 import { BRAZILIAN_104 } from "./geometry/brazilian_104.ts";
 import { BRAZILIAN_104_FULL } from "./geometry/brazilian_104_full.ts";
+import { GLOVE80_MAC, GLOVE80_WINDOWS } from "./geometry/glove80.ts";
 import { ISO_102 } from "./geometry/iso_102.ts";
 import { ISO_102_FULL } from "./geometry/iso_102_full.ts";
 import { JAPANESE_106 } from "./geometry/japanese_106.ts";
@@ -221,6 +222,8 @@ const geometries = new Map<Geometry, GeometryDict>([
   [Geometry.ANSI_101_FULL, ANSI_101_FULL],
   [Geometry.BRAZILIAN_104, BRAZILIAN_104],
   [Geometry.BRAZILIAN_104_FULL, BRAZILIAN_104_FULL],
+  [Geometry.GLOVE80_MAC, GLOVE80_MAC],
+  [Geometry.GLOVE80_WINDOWS, GLOVE80_WINDOWS],
   [Geometry.ISO_102, ISO_102],
   [Geometry.ISO_102_FULL, ISO_102_FULL],
   [Geometry.JAPANESE_106, JAPANESE_106],

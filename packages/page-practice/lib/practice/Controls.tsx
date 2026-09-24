@@ -5,12 +5,14 @@ import { Button, Icon, IconButton, useView } from "@keybr/widget";
 import {
   mdiAspectRatio,
   mdiCog,
+  mdiGamepadVariant,
   mdiHelpCircleOutline,
   mdiRedo,
   mdiUndo,
 } from "@mdi/js";
 import { memo, type ReactNode } from "react";
 import { useIntl } from "react-intl";
+import { OsToggle } from "../glove80/OsToggle.tsx";
 import { views } from "../views.tsx";
 import * as styles from "./Controls.module.less";
 
@@ -30,6 +32,14 @@ export const Controls = memo(function Controls({
   const { setView } = useView(views);
   return (
     <div id={names.controls} className={styles.controls}>
+      <OsToggle onChange={onResetLesson} />
+      <IconButton
+        icon={<Icon shape={mdiGamepadVariant} />}
+        title="Key Quest"
+        onClick={() => {
+          setView("quest");
+        }}
+      />
       <IconButton
         icon={<Icon shape={mdiHelpCircleOutline} />}
         title={formatMessage({

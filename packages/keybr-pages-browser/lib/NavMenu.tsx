@@ -1,27 +1,15 @@
-import {
-  type AnyUser,
-  Avatar,
-  type PageInfo,
-  Pages,
-  usePageData,
-} from "@keybr/pages-shared";
+import { type PageInfo, Pages } from "@keybr/pages-shared";
 import { Icon } from "@keybr/widget";
 import { clsx } from "clsx";
 import { type ReactNode } from "react";
 import { useIntl } from "react-intl";
 import { NavLink } from "react-router";
 import * as styles from "./NavMenu.module.less";
-import { SubMenu } from "./SubMenu.tsx";
 import { ThemeSwitcher } from "./themes/ThemeSwitcher.tsx";
 
-export function NavMenu({ currentPath }: { readonly currentPath: string }) {
-  const { publicUser } = usePageData();
+export function NavMenu(_: { readonly currentPath: string }) {
   return (
     <div className={styles.root}>
-      <MenuItem>
-        <AccountLink user={publicUser} />
-      </MenuItem>
-
       <MenuItem>
         <ThemeSwitcher />
       </MenuItem>
@@ -39,23 +27,11 @@ export function NavMenu({ currentPath }: { readonly currentPath: string }) {
       </MenuItem>
 
       <MenuItem>
-        <MenuItemLink page={Pages.highScores} />
-      </MenuItem>
-
-      <MenuItem>
-        <MenuItemLink page={Pages.multiplayer} />
-      </MenuItem>
-
-      <MenuItem>
         <MenuItemLink page={Pages.typingTest} />
       </MenuItem>
 
       <MenuItem>
         <MenuItemLink page={Pages.layouts} />
-      </MenuItem>
-
-      <MenuItem>
-        <SubMenu currentPath={currentPath} />
       </MenuItem>
     </div>
   );
@@ -63,28 +39,6 @@ export function NavMenu({ currentPath }: { readonly currentPath: string }) {
 
 function MenuItem({ children }: { readonly children: ReactNode }) {
   return <div className={styles.item}>{children}</div>;
-}
-
-function AccountLink({ user }: { readonly user: AnyUser }) {
-  const { formatMessage } = useIntl();
-  return (
-    <NavLink
-      className={({ isActive }) =>
-        clsx(styles.accountLink, isActive && styles.isActive)
-      }
-      to={Pages.account.path}
-    >
-      <Avatar user={user.id != null ? user : null} size="large" />
-      <span className={styles.userName}>
-        {user.id != null
-          ? user.name
-          : formatMessage({
-              id: "t_Sing_In",
-              defaultMessage: "Sign-In",
-            })}
-      </span>
-    </NavLink>
-  );
 }
 
 function MenuItemLink({

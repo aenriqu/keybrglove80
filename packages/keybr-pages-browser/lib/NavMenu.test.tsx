@@ -3,7 +3,7 @@ import { FakeIntlProvider, PreferredLocaleContext } from "@keybr/intl";
 import { PageDataContext } from "@keybr/pages-shared";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import { isNotNull } from "rich-assert";
+import { isNotNull, isNull } from "rich-assert";
 import { NavMenu } from "./NavMenu.tsx";
 
 test("render", () => {
@@ -32,9 +32,9 @@ test("render", () => {
     </PageDataContext.Provider>,
   );
 
-  isNotNull(r.queryByText("userName"));
-  isNotNull(r.queryByText("Polski"));
-  isNotNull(r.queryByText("English"));
+  isNotNull(r.queryByText("Practice"));
+  isNull(r.queryByText("Multiplayer"));
+  isNull(r.queryByText("High Scores"));
 
   r.unmount();
 });

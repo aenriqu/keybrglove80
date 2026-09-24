@@ -11,7 +11,7 @@ test("use default settings", () => {
 
   equal(options.language, Language.EN);
   equal(options.layout, Layout.EN_US);
-  equal(options.geometry, Geometry.ANSI_101);
+  equal(options.geometry, Geometry.GLOVE80_WINDOWS);
   equal(options.zones, ZoneMod.STANDARD);
 });
 
@@ -20,7 +20,7 @@ test("read default settings", () => {
 
   equal(options.language, Language.EN);
   equal(options.layout, Layout.EN_US);
-  equal(options.geometry, Geometry.ANSI_101);
+  equal(options.geometry, Geometry.GLOVE80_WINDOWS);
   equal(options.zones, ZoneMod.STANDARD);
 });
 

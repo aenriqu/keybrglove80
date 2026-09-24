@@ -1,3 +1,34 @@
+# Glove80 trainer
+
+A personal copy of keybr.com set up for the MoErgo Glove80.
+
+## Run it
+
+**Option A: Docker** (Mac or Windows). Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), open it, then in this folder run:
+
+```shell
+docker compose up --build -d
+```
+
+Open http://localhost:3000/. Stop it with `docker compose down`. After pulling new code, run the same `up` command again.
+
+**Option B: Node.js** (Mac or Linux). Install [Node.js 26+](https://nodejs.org/), then in this folder run:
+
+```shell
+./start.sh
+```
+
+Open http://localhost:3000/. Stop it with Ctrl+C. The first run takes a few minutes to build.
+
+## What's different
+
+* The virtual keyboard is a Glove80 with MoErgo's factory layout. The Win/Mac switch above the lesson swaps the thumb-key labels.
+* Key Quest (gamepad button): drills for thumb keys, edge keys, and navigation keys.
+* A pixel buddy earns XP from lessons and Key Quest rounds, and gets new gear as it levels up.
+* Progress is saved in your browser. Clearing site data for localhost erases it.
+
+---
+
 [![CI](https://github.com/aradzie/keybr.com/actions/workflows/ci.yml/badge.svg)](https://github.com/aradzie/keybr.com/actions/workflows/ci.yml)
 
 # [keybr.com](https://www.keybr.com/) is not (just) a typing test

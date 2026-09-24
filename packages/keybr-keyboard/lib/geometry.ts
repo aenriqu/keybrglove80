@@ -102,6 +102,18 @@ export class Geometry implements EnumItem {
     "staggered",
     ZoneMod.ALL,
   );
+  static readonly GLOVE80_WINDOWS = new Geometry(
+    "glove80win",
+    "Glove80 (Windows)",
+    "matrix",
+    new Enum(),
+  );
+  static readonly GLOVE80_MAC = new Geometry(
+    "glove80mac",
+    "Glove80 (Mac)",
+    "matrix",
+    new Enum(),
+  );
   static readonly MATRIX = new Geometry(
     "matrix", //
     "Matrix/Ergonomic",
@@ -110,6 +122,8 @@ export class Geometry implements EnumItem {
   );
 
   static readonly ALL = new Enum<Geometry>(
+    Geometry.GLOVE80_WINDOWS,
+    Geometry.GLOVE80_MAC,
     Geometry.ANSI_101,
     Geometry.ANSI_101_FULL,
     Geometry.ISO_102,
@@ -133,6 +147,10 @@ export class Geometry implements EnumItem {
     readonly form: "staggered" | "matrix",
     readonly zones: Enum<ZoneMod>,
   ) {}
+
+  get isGlove80(): boolean {
+    return this === Geometry.GLOVE80_WINDOWS || this === Geometry.GLOVE80_MAC;
+  }
 
   toString() {
     return this.id;

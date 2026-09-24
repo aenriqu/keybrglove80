@@ -24,6 +24,8 @@ export class Layout implements XEnumItem {
     /* language= */ Language.EN,
     /* emulate= */ false,
     /* geometries= */ new Enum(
+      Geometry.GLOVE80_WINDOWS,
+      Geometry.GLOVE80_MAC,
       Geometry.ANSI_101,
       Geometry.ANSI_101_FULL,
       Geometry.ISO_102,

@@ -1,0 +1,25 @@
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--secondary-f2);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.choice {
+  padding-inline: 0.75rem;
+  padding-block: 0.25rem;
+  border: none;
+  color: var(--secondary-l2);
+  background-color: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.choice + .choice {
+  border-inline-start: 1px solid var(--secondary-f2);
+}
+
+.active {
+  color: var(--primary);
+  background-color: var(--secondary);
+}
