@@ -4,21 +4,16 @@ A personal copy of keybr.com set up for the MoErgo Glove80.
 
 ## Run it
 
-**Option A: Docker** (Mac or Windows). Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), open it, then in this folder run:
+1. Install [Node.js 26 or newer](https://nodejs.org/) (one time).
+2. In this folder, run:
 
-```shell
-docker compose up --build -d
-```
+   ```shell
+   ./start.sh
+   ```
 
-Open http://localhost:3000/. Stop it with `docker compose down`. After pulling new code, run the same `up` command again.
+3. Open http://localhost:3000/
 
-**Option B: Node.js** (Mac or Linux). Install [Node.js 26+](https://nodejs.org/), then in this folder run:
-
-```shell
-./start.sh
-```
-
-Open http://localhost:3000/. Stop it with Ctrl+C. The first run takes a few minutes to build.
+Stop it with Ctrl+C. The first run takes a few minutes to build; after that it starts in seconds. After pulling new code, `./start.sh` rebuilds on its own.
 
 ## What's different
 
